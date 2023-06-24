@@ -107,7 +107,7 @@ function wrapper(plugin_info) {
     window.plugin.PotentialLevelEight.downloadCSV = function() {
         var csvData = window.plugin.PotentialLevelEight.generateCsvData();
         var todayDate = new Date().toISOString().slice(0, 10);
-        todayDate = todayDate.replace("-","");
+        todayDate = todayDate.replace("/\-/g","");
         var link = document.createElement("a");
         link.download = 'Portal_Export.'+todayDate+'.csv';
         link.href = "data:text/csv," + csvData;
