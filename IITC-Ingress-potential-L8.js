@@ -5,8 +5,8 @@
 // @version        0.2
 // @description    Hides any portal lower than level 7 and allows to check/record resonator status.
 // @id             IITC-Ingress-potential-L8@diadomraz
-// @updateURL      https://raw.githubusercontent.com/diadomraz/IITC-Ingress-potential-L8.js
-// @downloadURL    https://raw.githubusercontent.com/diadomraz/IITC-Ingress-potential-L8.js
+// @updateURL      https://raw.githubusercontent.com/diadomraz/IITC-Ingress-potential-L8/main/IITC-Ingress-potential-L8.js
+// @downloadURL    https://raw.githubusercontent.com/diadomraz/IITC-Ingress-potential-L8/main/IITC-Ingress-potential-L8.js
 // @match          https://intel.ingress.com/*
 // @grant          none
 // ==/UserScript==
