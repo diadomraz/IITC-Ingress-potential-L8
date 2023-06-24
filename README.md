@@ -10,4 +10,6 @@ The highlighted portals use the following background colors to indicate the port
 - brown - L7 portal with 7 level 8 resonators
 - white - L7 portal that needs more than one upgrade to become L8
 
+After finding any matching portals the list can be exported to CSV using the "Download L7" link in the toolbar.
+
 Loosely based on the "Hide portals that aren't fully deployed." plugin by Perringaiden
