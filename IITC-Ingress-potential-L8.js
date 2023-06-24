@@ -2,7 +2,7 @@
 // @author         diadomraz
 // @name           Check for potential L8 portals.
 // @category       Highlighter
-// @version        0.4.1
+// @version        0.4.2
 // @description    Hides any portal lower than level 7 and allows to check/record resonator status.
 // @id             IITC-Ingress-potential-L8@diadomraz
 // @namespace      https://github.com/diadomraz/IITC-Ingress-potential-L8/
@@ -12,7 +12,6 @@
 // @grant          none
 // ==/UserScript==
 
-
 function wrapper(plugin_info) {
     // ensure plugin framework is there, even if iitc is not yet loaded
     if(typeof window.plugin !== 'function') window.plugin = function() {};
@@ -20,15 +19,11 @@ function wrapper(plugin_info) {
     // use own namespace for plugin
     window.plugin.PotentialLevelEight = function() {};
 
-    /**
-     * Indicates whether portals are displayed at the current level.  Simply using zoom level
-     * does not factor in other tools that adjust display capabilities.
-     */
-     window.plugin.PotentialLevelEight.zoomLevelHasPortals = function() {
+    window.plugin.PotentialLevelEight.zoomLevelHasPortals = function() {
         return window.getMapZoomTileParameters(window.getDataZoomForMapZoom(window.map.getZoom())).hasPortals;
     };
 
-    //A list of found portals for export
+    //An array of found portals for export
     window.plugin.PotentialLevelEight.portals=[];
 
     window.plugin.PotentialLevelEight.hidePortal = function(data, conditional) {
@@ -36,21 +31,18 @@ function wrapper(plugin_info) {
         var health = d.health;
         var guid = data.portal.options.ent[0];
 
-            // Hide any portal that meets the conditions.
+        // Hide any portal that meets the conditions.
         var style = {};
 
         if (conditional(guid, d) == false && window.plugin.PotentialLevelEight.zoomLevelHasPortals()) {
-
             style.fillOpacity = 0.0;
             style.radius = 0.1;
             style.opacity = 0.0;
-
-        } else {
+        }
+        else {
             window.plugin.PotentialLevelEight.setStyleByLevel(style, d, guid);
         }
-
         data.portal.setStyle(style);
-
     }
 
     window.plugin.PotentialLevelEight.setStyleByLevel = function(style, data, guid){
@@ -60,6 +52,7 @@ function wrapper(plugin_info) {
               var details = window.portalDetail.get(guid);
               if (details && details !== 'undefined'&& details.resonators && details.resonators !== 'undefined'){
                 let sumres=0;
+                //Count number of L8 resonators
                 for (let index = 0; index < details.resonators.length; ++index) {
                     sumres += (details.resonators[index].level==8?1:0);
                 }
@@ -76,25 +69,23 @@ function wrapper(plugin_info) {
                   style.opacity = 1;
                 }
               }
-              else {
-                  //console.log("need data for "+guid);
-              }
             break;
             case 8: style.fillColor = 'magenta'; break;
           }
     }
 
-     window.plugin.PotentialLevelEight.notDeployed = function(guid, data) {
+    window.plugin.PotentialLevelEight.notDeployed = function(guid, data) {
         return (data.resCount == 8 && data.level>6)
     }
 
     window.plugin.PotentialLevelEight.highlightDeployed = function(data) {
         window.plugin.PotentialLevelEight.hidePortal(data, window.plugin.PotentialLevelEight.notDeployed);
     }
-    window.plugin.PotentialLevelEight.exportData = function(data) {
-        window.plugin.PotentialLevelEight.hidePortal(data, window.plugin.PotentialLevelEight.notDeployed);
-    }
+
     window.plugin.PotentialLevelEight.generateCsvData = function() {
+        if(window.plugin.PotentialLevelEight.portals.length == 0){
+            return "";
+        }
         var csvData = "GUID;Name;LatLong\n";
         for (var i in window.plugin.PotentialLevelEight.portals){
            var str=window.plugin.PotentialLevelEight.portals[i].title;
@@ -106,13 +97,18 @@ function wrapper(plugin_info) {
     };
 
     window.plugin.PotentialLevelEight.downloadCSV = function() {
-        var csvData = window.plugin.PotentialLevelEight.generateCsvData();
-        var todayDate = new Date().toISOString().slice(0, 10);
-        todayDate = todayDate.replace(/(-|\s)/g,"");
-        var link = document.createElement("a");
-        link.download = 'L7Export.'+todayDate+'.csv';
-        link.href = "data:text/csv," + csvData;
-        link.click();
+        if(window.plugin.PotentialLevelEight.portals.length>0){
+          var csvData = window.plugin.PotentialLevelEight.generateCsvData();
+          var todayDate = new Date().toISOString().slice(0, 10);
+          todayDate = todayDate.replace(/(-|\s)/g,"");
+          var link = document.createElement("a");
+          link.download = 'L7Export.'+todayDate+'.csv';
+          link.href = "data:text/csv," + csvData;
+          link.click();
+        }
+        else {
+          alert("No portals to export");
+        }
     }
 
     var setup = function() {
@@ -132,4 +128,3 @@ var info = {};
 if (typeof GM_info !== 'undefined' && GM_info && GM_info.script) info.script = { version: GM_info.script.version, name: GM_info.script.name, description: GM_info.script.description };
 script.appendChild(document.createTextNode('('+ wrapper +')('+JSON.stringify(info)+');'));
 (document.body || document.head || document.documentElement).appendChild(script);
-
