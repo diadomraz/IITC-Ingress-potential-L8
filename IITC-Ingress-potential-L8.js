@@ -2,7 +2,7 @@
 // @author         diadomraz
 // @name           Check for potential L8 portals.
 // @category       Highlighter
-// @version        0.2
+// @version        0.3
 // @description    Hides any portal lower than level 7 and allows to check/record resonator status.
 // @id             IITC-Ingress-potential-L8@diadomraz
 // @updateURL      https://raw.githubusercontent.com/diadomraz/IITC-Ingress-potential-L8/main/IITC-Ingress-potential-L8.js
@@ -109,7 +109,7 @@ function wrapper(plugin_info) {
         var todayDate = new Date().toISOString().slice(0, 10);
         todayDate = todayDate.replace(/(-|\s)/g,"");
         var link = document.createElement("a");
-        link.download = 'Portal_Export.'+todayDate+'.csv';
+        link.download = 'L7Export.'+todayDate+'.csv';
         link.href = "data:text/csv," + csvData;
         link.click();
     }
