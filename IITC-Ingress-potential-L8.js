@@ -100,21 +100,22 @@ function wrapper(plugin_info) {
         if(Object.keys(window.plugin.PotentialLevelEight.portals).length == 0){
             return "{}";
         }
-        var jsonData = '{"maps":{"idOthers":{"label":"Others","state":1,"bkmrk":{}}},"portals":{"idOthers":{"label":"Others","state":1,"uri":0,"visibility":"V","bkmrk":{}},"echoAthens'.$d.'":{"label":"Portals Sofia","state":0,"uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAoCAYAAADpE0oSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAMmSURBVFhH7VVLaBRBEK2emf0Qo9GQ4Ib4SSTgB0H8HTwoQfEQIWCQ1Zt6kigaUMSDELwE/JwE8eDNgyJkIdkoKorKXnIwIBIVLwqJmmA+mtV8d7Mz077qmYmSXUNmvck8qJ6q6u56U9XVMxQgQIAAAQIECBDg/4Vwn0VDktToBOmUHjAoGzUokjFpdFWOUmQJEtJdloeiiWVc6kQDMcoZW0mT+xBpPUkRxVSWpHwPeUKh0BtKVA4XeoGiiGX8XZjs8kak24wQO+FZCjdieeGYR0xh6AHnNeqveiFeiZyacuGbWMZHSsm2DyOjVphrIJqaKAwL7/ARKy6TZraLxOoZ17/gpjyo8ppWA0jbYNZAeD+nZ8M3Dm0Ewpl6pdWdI6A2MvUG9MNcor4ylocGN6CX7kDd7niYwB5EvMeQ+6TZabzLcvgbIXFIOS8CwEkvuVKiq/oLOxadsbyE7pV6E9RNjochP+HdL1I620LJ2EPRUd1NHbFHpJtnQXQeCxQJgP6iLaSp/QqLL3XPWCmIdkHjzmXMIt5tmtQ6RKo243UuP9VZTol2lP8uXF7Zo5g64Oo+iEN2KUJshOYdz3eU+YF4GuMzzYPyC5mAihdU4H3bHNUPsZELYWuZazEmyAwPuXphSH0AY8YxFLwz90GsWybGuesAlFDE5Eb6O2xZgTHiGICkcVfzQRwumcD42TEUKsmSu50vWD5kw4cIGWI/1LDjUXjrPn0Q15VPYuyGcOYMZCJO0ezwjj/vJ0PWS4OiJXvQXEdhehxZSMpRfzfKoiCbhjajYbqgrnM8gE19JMR1fK+f06yYRpbL8MHai5mTiF4HCpdD9uLMj4nOlb1s+SPmu9w7fAYkV2B61wqw8R3WRqDwGYKY+Gy5xF78NM63ldKxWyIlVMV8ETNkfKyMrEwLtl6Aibu9IGzsGMXzJtnZGyJZ+8NxF0HMkMf7ovQzehq7z8GMQQrF4cwGQX0VxbknkivmSBlFEXuQB7/WIMIRSD3MtZAwSor/MfWjF56h5zpFsqpfLZ6HfyJmqHN//W0Jqop7rRtkmjmy9BmKVEyLhLDcZfNA9AsetgpEIRlOygAAAABJRU5ErkJggg==","visibility":"V","bkmrk":{';
+        var jsonData = '{"maps":{"idOthers":{"label":"Others","state":1,"bkmrk":{}}},"portals":{"idOthers":{"label":"Others","state":1,"uri":0,"visibility":"V","bkmrk":{}},"PotentialL8":{"label":"Potential L8 portals","state":0,"visibility":"V","bkmrk":{';
         var started=false;
         for (var i in window.plugin.PotentialLevelEight.portals){
            var str=window.plugin.PotentialLevelEight.portals[i].title;
            str.replace(/\"/g, "\\\"")
-           jsonData += (started?",":"") + '"' + i + '":{"guid":"'+ i +'","latlng":"'+window.plugin.PotentialLevelEight.portals[i].latlng +'","label":"'+ str +'"}' + "\n";
+           jsonData += (started?",":"") + '"' + i + '":{"guid":"'+ i +'","latlng":"' + window.plugin.PotentialLevelEight.portals[i].latlng +'","label":"'+ str +'"}' + "\n";
            started=true;
         }
+        //.->portals->PotentialL8->bkmrk
         jsonData += '}}}}';
         return jsonData;
     };
 
     window.plugin.PotentialLevelEight.downloadCSV = function() {
-        if(Object.keys(window.plugin.PotentialLevelEight.portals).length > 0){
-          var csvData = window.plugin.PotentialLevelEight.generateCsvData();
+        var csvData = window.plugin.PotentialLevelEight.generateCsvData();
+        if (csvData!=""){
           var todayDate = new Date().toISOString().slice(0, 10);
           todayDate = todayDate.replace(/(-|\s)/g,"");
           var link = document.createElement("a");
@@ -128,13 +129,14 @@ function wrapper(plugin_info) {
     }
 
     window.plugin.PotentialLevelEight.downloadJSON = function() {
-        if(Object.keys(window.plugin.PotentialLevelEight.portals).length > 0){
-          var jsonData = window.plugin.PotentialLevelEight.generateJSONData();
+        var jsonData = window.plugin.PotentialLevelEight.generateJSONData();
+        if (jsonData!="{}"){
           var todayDate = new Date().toISOString().slice(0, 10);
           todayDate = todayDate.replace(/(-|\s)/g,"");
           var link = document.createElement("a");
           link.download = 'L7Export.'+todayDate+'.json';
-          link.href = "data:application/json," + jsonData;
+          //Escape encodes non ASCII chars and the result is harder to read but it will preserver the data better
+          link.href = "data:application/json," + escape(jsonData);
           link.click();
         }
         else {
@@ -144,7 +146,8 @@ function wrapper(plugin_info) {
 
     var setup = function() {
         window.addPortalHighlighter('Level 7 & 8', window.plugin.PotentialLevelEight.highlightDeployed);
-        $('#toolbox').append('<a onclick="window.plugin.PotentialLevelEight.downloadJSON();return false;">Download L7</a>');
+        $('#toolbox').append('<a onclick="window.plugin.PotentialLevelEight.downloadCSV();return false;">Download L7 CSV</a>');
+        $('#toolbox').append('<a onclick="window.plugin.PotentialLevelEight.downloadJSON();return false;">Bookmarks L7</a>');
     }
 
     setup.info = plugin_info; //add the script info data to the function as a property
